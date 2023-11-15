@@ -8,6 +8,13 @@ export const getAll = async () => {
   return data;
 };
 
+export const getOne = async (userId) => {
+  const response = await fetch(`${baseUrl}/${userId}`);
+  const result = await response.json();
+
+  return result;
+};
+
 export const create = async (data) => {
   const body = {
     firstName: data.firstName,
@@ -35,5 +42,13 @@ export const create = async (data) => {
   });
   const result = await response.json();
   console.log(result);
+  return result;
+};
+
+export const deleteUser = async (userId) => {
+  const response = await fetch(`${baseUrl}/${userId}`, {
+    method: "DELETE",
+  });
+  const result = await response.json();
   return result;
 };

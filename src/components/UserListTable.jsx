@@ -2,15 +2,23 @@ import UserItem from "./UserItem";
 import * as userService from "../services/userService";
 import { useEffect, useState } from "react";
 import CreateUserModal from "./CreateUserModal";
+import UserInfoModal from "./UserInfoModal";
+import UserDeleteModal from "./UserDeleteModal";
 
 const UserListTable = () => {
   const [users, setUsers] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
-    userService.getAll().then((result) => setUsers(result)).catch(err=>{
-      console.log(err);
-    });
+    userService
+      .getAll()
+      .then((result) => setUsers(result))
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const createUserClickHandler = () => {
@@ -21,24 +29,56 @@ const UserListTable = () => {
     setShowCreate(false);
   };
 
-  const userCreateHandler = async(e) => {
+  const userCreateHandler = async (e) => {
     e.preventDefault();
 
-    const data=Object.fromEntries(new FormData(e.currentTarget))
-    
-    const result = await userService.create(data)
+    const data = Object.fromEntries(new FormData(e.currentTarget));
 
-    setUsers(state=>[...state,result])
+    const result = await userService.create(data);
+
+    setUsers((state) => [...state, result]);
 
     setShowCreate(false);
   };
-  
+
+  const userInfoClickHandler = async (userId) => {
+    setSelectedUser(userId);
+    setShowInfo(true);
+  };
+
+  const deleteUserHandler = async () => {
+    console.log("User Deleted");
+
+    await userService.deleteUser(selectedUser);
+
+    setUsers((state) => state.filter((user) => user._id !== selectedUser));
+
+    setShowDelete(false);
+  };
+
+  const deleteUserClickHandler = async (userId) => {
+    setSelectedUser(userId);
+    setShowDelete(true);
+  };
+
   return (
     <div className="table-wrapper">
       {showCreate && (
         <CreateUserModal
           onClose={hideCreateUserModal}
           onCreate={userCreateHandler}
+        />
+      )}
+      {showInfo && (
+        <UserInfoModal
+          onClose={() => setShowInfo(false)}
+          userId={selectedUser}
+        />
+      )}
+      {showDelete && (
+        <UserDeleteModal
+          onClose={() => setShowDelete(false)}
+          onDelete={deleteUserHandler}
         />
       )}
       <table className="table">
@@ -140,7 +180,12 @@ const UserListTable = () => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <UserItem key={user._id} {...user} />
+            <UserItem
+              key={user._id}
+              {...user}
+              onInfoClick={userInfoClickHandler}
+              onDeleteClick={deleteUserClickHandler}
+            />
           ))}
         </tbody>
       </table>

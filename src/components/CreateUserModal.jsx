@@ -1,4 +1,4 @@
-const CreateUserModal = ({ onClose, onCreate }) => {
+const CreateUserModal = ({ onClose, onCreate, }) => {
   return (
     <div className="overlay">
       <div className="backdrop" onClick={onClose}></div>

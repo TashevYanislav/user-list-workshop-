@@ -1,13 +1,25 @@
 import { formatDate } from "../utils/dateUtils";
 
 const UserItem = ({
+  _id,
   firstName,
   lastName,
   email,
   phoneNumber,
   createdAt,
   imageUrl,
+  onInfoClick,
+  onDeleteClick ,
 }) => {
+
+  const InfoClickHendler=()=>{
+    onInfoClick(_id)
+  }
+
+  const deleteClickHandler =() =>{
+    onDeleteClick(_id)
+  }
+
   return (
     <tr>
       <td>
@@ -36,7 +48,7 @@ const UserItem = ({
             ></path>
           </svg>
         </button>
-        <button className="btn delete-btn" title="Delete">
+        <button className="btn delete-btn" title="Delete" onClick={deleteClickHandler}>
           <svg
             aria-hidden="true"
             focusable="false"
@@ -53,7 +65,7 @@ const UserItem = ({
             ></path>
           </svg>
         </button>
-        <button className="btn info-btn" title="Info">
+        <button className="btn info-btn" title="Info" onClick={InfoClickHendler}>
           <svg
             aria-hidden="true"
             focusable="false"
